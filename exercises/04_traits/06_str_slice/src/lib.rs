@@ -1,13 +1,13 @@
 // TODO: Re-implement `Ticket`'s accessor methods. This time return a `&str` rather than a `&String`.
 
-pub struct Ticket {
-    title: String,
-    description: String,
-    status: String,
+pub struct Ticket<'a> {
+    title: &'a str,
+    description: &'a str,
+    status: &'a str,
 }
 
-impl Ticket {
-    pub fn new(title: String, description: String, status: String) -> Ticket {
+impl<'a> Ticket<'a> {
+    pub fn new(title: &'a str, description: &'a str, status: &'a str) -> Ticket<'a> {
         if title.is_empty() {
             panic!("Title cannot be empty");
         }
@@ -31,16 +31,16 @@ impl Ticket {
         }
     }
 
-    pub fn title(&self) -> &String {
-        &self.title
+    pub fn title(&self) -> &str {
+        self.title
     }
 
-    pub fn description(&self) -> &String {
-        &self.description
+    pub fn description(&self) -> &str {
+        self.description
     }
 
-    pub fn status(&self) -> &String {
-        &self.status
+    pub fn status(&self) -> &str {
+        self.status
     }
 }
 
@@ -52,7 +52,9 @@ mod tests {
 
     #[test]
     fn test_type() {
-        let ticket = Ticket::new(valid_title(), valid_description(), "To-Do".to_string());
+        let title = valid_title();
+        let binding = valid_description();
+        let ticket = Ticket::new(title.as_str(), binding.as_str(), "To-Do");
         // Some dark magic to verify that you used the expected return types
         assert_eq!(TypeId::of::<str>(), ticket.title().type_id());
         assert_eq!(TypeId::of::<str>(), ticket.description().type_id());

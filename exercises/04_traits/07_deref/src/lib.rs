@@ -12,11 +12,13 @@ pub struct Ticket {
 
 impl Ticket {
     pub fn title(&self) -> &str {
-        todo!()
+        self.title.trim_end_matches(' ').trim_start_matches(' ')
     }
 
     pub fn description(&self) -> &str {
-        todo!()
+        self.description
+            .trim_end_matches(' ')
+            .trim_start_matches(' ')
     }
 }
 

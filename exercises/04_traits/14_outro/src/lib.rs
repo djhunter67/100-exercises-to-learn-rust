@@ -22,22 +22,41 @@ impl SaturatingU16 {
     }
 }
 
-impl From<&SaturatingU16> for u16 {
-    fn from(value: &SaturatingU16) -> Self {
-        value.value
-    }
-}
+// impl From<&SaturatingU16> for u16 {
+//     fn from(value: &SaturatingU16) -> Self {
+//         value.value
+//     }
+// }
 
-impl From<SaturatingU16> for u16 {
-    fn from(value: SaturatingU16) -> Self {
-        value.value
-    }
-}
+// impl From<SaturatingU16> for u16 {
+//     fn from(value: SaturatingU16) -> Self {
+//         value.value
+//     }
+// }
+
+// impl From<SaturatingU16> for u8 {
+//     fn from(value: SaturatingU16) -> Self {
+//         <u16 as TryInto<u8>>::try_into(value.value).expect("unable to reduce")
+//     }
+// }
+
+// impl From<&SaturatingU16> for u8 {
+//     fn from(value: &SaturatingU16) -> Self {
+//         <u16 as TryInto<u8>>::try_into(value.value).expect("unable to reduce")
+//     }
+// }
 
 impl From<u8> for SaturatingU16 {
     fn from(value: u8) -> Self {
         let value = value.into();
         Self { value }
+    }
+}
+
+impl From<&u8> for SaturatingU16 {
+    fn from(value: &u8) -> Self {
+        let value = Into::<u16>::into(*value);
+        Self::new(value)
     }
 }
 
@@ -53,50 +72,29 @@ impl From<u16> for SaturatingU16 {
     }
 }
 
-impl From<&u8> for SaturatingU16 {
-    fn from(value: &u8) -> Self {
-        let value = Into::<u16>::into(*value);
-        Self { value }
-    }
-}
-
-impl Add for SaturatingU16 {
-    type Output = u16;
+impl Add<SaturatingU16> for SaturatingU16 {
+    type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        self.value + rhs.value
+        Self {
+            value: self.value.saturating_add(rhs.value),
+        }
     }
 }
 
-impl Add<u8> for SaturatingU16 {
-    type Output = u16;
+impl Add<&SaturatingU16> for SaturatingU16 {
+    type Output = SaturatingU16;
 
-    fn add(self, rhs: u8) -> Self::Output {
-        self.value + Into::<u16>::into(rhs)
+    fn add(self, rhs: &SaturatingU16) -> Self::Output {
+            SaturatingU16::new(self.value.saturating_add(rhs.value))
     }
 }
 
 impl Add<&u16> for SaturatingU16 {
-    type Output = u16;
+    type Output = SaturatingU16;
 
     fn add(self, rhs: &u16) -> Self::Output {
-        self.value + *rhs
-    }
-}
-
-impl Add<&u8> for SaturatingU16 {
-    type Output = u16;
-
-    fn add(self, rhs: &u8) -> Self::Output {
-        self.value + Into::<u16>::into(*rhs)
-    }
-}
-
-impl Add<SaturatingU16> for u16 {
-    type Output = u16;
-
-    fn add(self, rhs: SaturatingU16) -> Self::Output {
-        self + rhs.value
+        SaturatingU16 { value: self.value + *rhs }
     }
 }
 
@@ -104,8 +102,78 @@ impl Add<u16> for SaturatingU16 {
     type Output = SaturatingU16;
 
     fn add(self, rhs: u16) -> Self::Output {
-        SaturatingU16 {
-            value: self.value + rhs,
-        }
+        SaturatingU16::new(self.value.saturating_add(rhs))
     }
 }
+
+
+// impl Add<u8> for SaturatingU16 {
+//     type Output = SaturatingU16;
+
+//     fn add(self, rhs: u8) -> Self::Output {
+//         SaturatingU16 {
+//             value: self.value + Into::<u16>::into(rhs),
+//         }
+//     }
+// }
+
+// impl Add<&u8> for SaturatingU16 {
+//     type Output = SaturatingU16;
+
+//     fn add(self, rhs: &u8) -> Self::Output {
+//         SaturatingU16 {
+//             value: self.value + Into::<u16>::into(*rhs),
+//         }
+//     }
+// }
+
+
+// impl Add<&SaturatingU16> for u16 {
+//     type Output = SaturatingU16;
+
+//     fn add(self, rhs: &SaturatingU16) -> Self::Output {
+//         SaturatingU16 {
+//             value: self + rhs.value,
+//         }
+//     }
+// }
+
+// impl Add<&SaturatingU16> for u8 {
+//     type Output = SaturatingU16;
+
+//     fn add(self, rhs: &SaturatingU16) -> Self::Output {
+//         SaturatingU16 {
+//             value: u16::from(self) + rhs.value,
+//         }
+//     }
+// }
+
+// impl Add<SaturatingU16> for u8 {
+//     type Output = SaturatingU16;
+
+//     fn add(self, rhs: SaturatingU16) -> Self::Output {
+//         SaturatingU16 {
+//             value: u16::from(self) + rhs.value,
+//         }
+//     }
+// }
+
+// impl Add<SaturatingU16> for &u8 {
+//     type Output = SaturatingU16;
+
+//     fn add(self, rhs: SaturatingU16) -> Self::Output {
+//         SaturatingU16 {
+//             value: u16::from(*self) + rhs.value,
+//         }
+//     }
+// }
+
+// impl Add<&SaturatingU16> for &u8 {
+//     type Output = SaturatingU16;
+
+//     fn add(self, rhs: &SaturatingU16) -> Self::Output {
+//         SaturatingU16 {
+//             value: u16::from(*self) + rhs.value,
+//         }
+//     }
+// }
